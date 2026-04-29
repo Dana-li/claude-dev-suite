@@ -9,19 +9,19 @@
   "plugins": [
     {
       "name": "dev-workflow",
-      "source": "./packages/dev-workflow",
+      "source": "./dev-workflow",
       "description": "10阶段全栈开发工作流：Discovery → Hotfix 全生命周期覆盖",
       "version": "1.0.0"
     },
     {
       "name": "dev-commands",
-      "source": "./packages/dev-commands",
+      "source": "./dev-commands",
       "description": "Git 开发辅助命令集：commit/push/merge/review/test/deploy",
       "version": "1.0.0"
     },
     {
       "name": "dev-quality",
-      "source": "./packages/dev-quality",
+      "source": "./dev-quality",
       "description": "代码审查与质量保障：Bug分析、代码审查、设计评审",
       "version": "1.0.0"
     }
