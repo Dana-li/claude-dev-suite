@@ -1,0 +1,45 @@
+{
+  "_comment": "Dev Suite Claude Code 设置模板",
+  "_instructions": "复制此文件到 ~/.claude/settings.json 并根据需要修改",
+  
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "dev-suite": {
+      "source": {
+        "source": "github",
+        "repo": "你的用户名/claude-dev-suite"
+      }
+    }
+  },
+  
+  "enabledPlugins": {
+    "feature-dev@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "dev-workflow@dev-suite": true,
+    "dev-commands@dev-suite": true,
+    "dev-quality@dev-suite": true
+  },
+
+  "_pluginManagement": {
+    "install": "claude plugin install <plugin>@<marketplace>",
+    "remove": "claude plugin uninstall <plugin>",
+    "list": "claude plugin list"
+  },
+
+  "_customCommands": {
+    "dev": "/dev",
+    "commit": "/commit",
+    "push": "/push",
+    "merge": "/merge",
+    "status": "/status",
+    "review": "/review",
+    "test": "/test",
+    "deploy": "/deploy",
+    "close": "/close"
+  }
+}
