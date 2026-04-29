@@ -136,7 +136,30 @@ else {
     Write-Warn "agents 源文件不存在，跳过"
 }
 
-# 6. 更新 settings.json
+# 6. 安装 Skills
+Write-Host ""
+Write-Info "安装 dev-quality/skills..."
+if (Test-Path "$SourceDir\packages\dev-quality\skills") {
+    New-Item -ItemType Directory -Force -Path "$ClaudeDir\skills" | Out-Null
+    Copy-Item -Path "$SourceDir\packages\dev-quality\skills\*" -Destination "$ClaudeDir\skills\" -Recurse -Force
+    Write-Success "skills 安装完成"
+}
+else {
+    Write-Warn "skills 源文件不存在，跳过"
+}
+
+# 7. 安装 hooks
+Write-Info "安装 hooks..."
+if (Test-Path "$SourceDir\configs\hooks") {
+    New-Item -ItemType Directory -Force -Path "$ClaudeDir\hooks" | Out-Null
+    Copy-Item -Path "$SourceDir\configs\hooks\*" -Destination "$ClaudeDir\hooks\" -Recurse -Force
+    Write-Success "hooks 安装完成"
+}
+else {
+    Write-Warn "hooks 源文件不存在，跳过"
+}
+
+# 8. 更新 settings.json
 Write-Host ""
 Write-Info "更新 Claude Code 设置..."
 
