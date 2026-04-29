@@ -1,21 +1,19 @@
 {
   "name": "dev-commands",
   "version": "1.0.0",
-  "description": "Git 开发辅助命令集：安全的 commit/push/merge/review/test/deploy 命令，防止常见错误",
+  "description": "Git 开发辅助命令集：commit/push/merge/review/test/deploy",
   "author": {
     "name": "LeeDC",
-    "email": "leedc@example.com",
     "url": "https://github.com/Dana-li"
   },
-  "license": "MIT",
-  "keywords": [
-    "git",
-    "commands",
+  "commands": [
     "commit",
-    "workflow",
-    "safe"
-  ],
-  "engines": {
-    "claude": ">=2.0.0"
-  }
+    "push",
+    "merge",
+    "status",
+    "review",
+    "test",
+    "deploy",
+    "close"
+  ]
 }

@@ -1,21 +1,14 @@
 {
   "name": "dev-quality",
   "version": "1.0.0",
-  "description": "代码审查与质量保障套件：Bugs分析、代码审查、设计评审、测试生成，覆盖 Java/Vue 全栈",
+  "description": "代码审查与质量保障：Bug分析、代码审查、设计评审",
   "author": {
     "name": "LeeDC",
-    "email": "leedc@example.com",
     "url": "https://github.com/Dana-li"
   },
-  "license": "MIT",
-  "keywords": [
-    "quality",
-    "review",
+  "skills": [
     "bug-analyzer",
-    "code-review",
-    "security"
-  ],
-  "engines": {
-    "claude": ">=2.0.0"
-  }
+    "code-reviewer",
+    "design-reviewer"
+  ]
 }
