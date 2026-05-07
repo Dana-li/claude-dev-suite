@@ -1,8 +1,8 @@
 {
   "$schema": "https://code.claude.com/schema/plugin-1.0.json",
   "name": "dev-quality",
-  "version": "2.2.0",
-  "description": "代码审查与质量保障：系统化调试、TDD铁律、两阶段审查、设计评审、任务拆解、子Agent驱动开发、完成验证、Git Worktree、技能入口、领域知识注入、数据库迁移、前端重构、E2E测试集成",
+  "version": "2.3.0",
+  "description": "代码审查与质量保障：系统化调试、TDD铁律、两阶段审查、设计评审、任务拆解、子Agent驱动开发、完成验证、Git Worktree、技能入口、领域知识注入、数据库迁移、前端重构、E2E测试集成、Windows可选扩展",
   "author": {
     "name": "LeeDC",
     "url": "https://github.com/Dana-li"

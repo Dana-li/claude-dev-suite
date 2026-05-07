@@ -305,6 +305,44 @@ argument-hint: Optional feature description
 
 ---
 
+## ⭐ Windows 可选扩展 [可选]
+
+### 适用条件
+
+仅当同时满足：
+1. 当前操作系统为 **Windows**
+2. 项目已配置 MCP 集成 `windows-desktop` 服务器
+3. 任务涉及 Windows 桌面操作（文件/窗口/进程/UI）
+
+### 启用方式
+
+在项目 `.workbuddy/mcp.json` 中添加（用户级可配在 `~/.workbuddy/mcp.json`）：
+
+```json
+{
+  "mcpServers": {
+    "windows-desktop": {
+      "command": "npx",
+      "args": ["-y", "@mario-andreschak/mcp-windows-desktop-automation"]
+    }
+  }
+}
+```
+
+启用后各阶段增强：
+
+| 阶段 | 增强能力 |
+|------|---------|
+| Phase 5 | 通过 `process_run` 启动测试环境 |
+| Phase 6 | 通过 `screenshot_capture` 截图辅助审查 |
+| Phase 7 | 通过 `file_read` 读取日志验证 |
+| Phase 8 | 通过 `process_exists` 验证服务状态 |
+
+> **注意**：本扩展为可选增强，不配置不影响核心工作流。
+> 详细用法见 `skill-dev-windows` 技能。
+
+---
+
 ## Token 预算控制
 
 | 阶段 | 平均消耗 | 最大消耗 |
@@ -319,7 +357,7 @@ argument-hint: Optional feature description
 
 ---
 
-**版本**: v4.3.0
+**版本**: v4.4.0
 **基础**: 官方 feature-dev v1.0.0
 **增强日期**: 2026-05-07
-**本次更新**: 集成 Dev Suite 新技能（数据库迁移、前端重构、E2E测试集成）
+**本次更新**: 集成 Windows 可选扩展（MCP 桌面自动化）
