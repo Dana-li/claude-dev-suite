@@ -286,6 +286,9 @@ argument-hint: Optional feature description
 | Phase 4 | skill-dev-worktree | Git Worktree 隔离开发环境 |
 | Phase 5 | skill-dev-test (TDD) | TDD 铁律开发（RED→GREEN→REFACTOR） |
 | Phase 5 | skill-dev-subagent | 子 Agent 驱动开发（TDD 实现） |
+| Phase 5 | skill-dev-db-migration | 数据库迁移（字段改名/数据迁移/兼容性） |
+| Phase 5 | skill-dev-frontend | 前端重构（Vue 组件/菜单/表单/UI 一致性） |
+| Phase 5 | skill-dev-e2e | E2E 测试（Playwright 更新/视觉回归） |
 | Phase 6 | skill-dev-review | 两阶段审查（规格合规 → 代码质量） |
 | Phase 6 | skill-dev-subagent | 子 Agent 自动审查循环 |
 | Phase 7 | skill-dev-verification | 完成前 5 步强制验证 |
@@ -316,7 +319,7 @@ argument-hint: Optional feature description
 
 ---
 
-**版本**: v4.2.0
+**版本**: v4.3.0
 **基础**: 官方 feature-dev v1.0.0
 **增强日期**: 2026-05-07
-**本次更新**: 集成 Dev Suite 技能系统（TDD铁律、两阶段审查、系统化调试、完成验证、Worktree、Writing Plans、Subagent驱动开发、领域知识注入）
+**本次更新**: 集成 Dev Suite 新技能（数据库迁移、前端重构、E2E测试集成）
