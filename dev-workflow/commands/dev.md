@@ -5,9 +5,11 @@ argument-hint: Optional feature description
 
 # Feature Development (Enhanced)
 
-> **版本**: v4.0 Enhanced
+> **版本**: v4.5.0
 > **基础**: 官方 feature-dev v1.0.0
-> **增强**: 全栈场景覆盖 + DevOps 工作流
+> **增强**: 全栈场景覆盖 + DevOps 工作流 + Phase7过渡询问机制
+> **调用方式**: 在 WorkBuddy 中输入 `/dev-workflow:dev 你的需求描述`，或 Claude Code 中输入 `/dev`
+> **流程**: 10 阶段，Phase 1-7 为核心开发，Phase 8-10 [按需] 进入
 
 ---
 
@@ -182,22 +184,39 @@ argument-hint: Optional feature description
 
 ---
 
-## Phase 7: Summary (总结)
+## Phase 7: Summary & Transition (总结与过渡)
 
-**目标**: 记录完成的工作
+**目标**: 总结实现阶段成果，确认是否继续集成/部署阶段
 
 **Actions**:
-1. 标记所有待办事项完成
-2. 总结：
+
+### 7a. 实现阶段总结
+1. 汇总：
    - 构建了什么
    - 做出的关键决策
    - 修改的文件
    - 建议的后续步骤
-3. 更新文档（API 文档、变更日志）
+2. 更新文档（API 文档、变更日志）
+
+### 7b. 是否继续 → Phase 8-10？
+
+**向用户询问**：
+```
+实现阶段已完成。是否继续进入：
+
+1️⃣ 集成验证（Phase 8）— API/消息队列/缓存集成验证
+2️⃣ 部署上线（Phase 9）— 备份/灰度/上线验证
+3️⃣ 到此为止 — 仅完成开发
+
+请输入 1、2 或 3
+```
+
+> **注意**：如果用户选择 1 或 2，不要结束会话，继续执行后续阶段。
+> 不要自动标记所有待办完成 — Phase 8-10 的待办尚未执行。
 
 ---
 
-## ⭐ Phase 8: Integration (集成) [增强]
+## ⭐ Phase 8: Integration (集成) [按需]
 
 **目标**: 跨域集成验证
 
@@ -219,9 +238,9 @@ argument-hint: Optional feature description
 
 ---
 
-## ⭐ Phase 9: Deployment (部署) [增强]
+## ⭐ Phase 9: Deployment (部署) [按需]
 
-**目标**: 安全部署上线
+**目标**: 安全部署上线（仅当需要部署时才执行）
 
 **Actions**:
 1. **部署前检查**:
@@ -251,7 +270,7 @@ argument-hint: Optional feature description
 
 ---
 
-## ⭐ Phase 10: Hotfix (热修复) [增强]
+## ⭐ Phase 10: Hotfix (热修复) [按需]
 
 **目标**: 快速修复生产问题
 
@@ -357,7 +376,7 @@ argument-hint: Optional feature description
 
 ---
 
-**版本**: v4.4.0
+**版本**: v4.5.0
 **基础**: 官方 feature-dev v1.0.0
 **增强日期**: 2026-05-07
-**本次更新**: 集成 Windows 可选扩展（MCP 桌面自动化）
+**本次更新**: 修复Phase7过早结束问题（标记完成→询问是否继续）；Phase8-10改为[按需]
