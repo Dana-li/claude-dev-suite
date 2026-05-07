@@ -1,18 +1,62 @@
 ---
 name: skill-dev-test
-description: 自动生成单元测试，覆盖正常路径、边界值、异常场景。触发场景：用户要求生成测试、为函数编写测试用例、增加测试覆盖。
+description: "测试驱动开发（TDD）铁律：无失败测试不写生产代码。RED→GREEN→REFACTOR 三阶段强制流程。覆盖正常路径、边界值、异常场景。"
 allowed-tools: Read,Grep,Glob,Write,Bash
 ---
 
-# 单元测试生成 Skill
+# 测试驱动开发 —— TDD 铁律
 
-## 功能范围
+> ⚠️ **核心铁律: 无失败测试，不写生产代码**
 
-- ✅ 自动分析源代码
-- ✅ 智能检测测试框架
-- ✅ 生成 5 类测试用例
-- ✅ Mock 外部依赖
-- ✅ 输出测试摘要
+---
+
+## 铁律声明
+
+> `NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST`
+
+**意思就是**：
+
+1. 先写一个会**失败**的测试
+2. 运行确认它确实**失败**（RED）
+3. 写最少的代码让它**通过**（GREEN）
+4. **重构**代码保持整洁（REFACTOR）
+5. 重复
+
+**如果你先写了生产代码才写测试 —— 删掉。重新开始。**
+
+---
+
+## TDD 三阶段流程
+
+```
+                    ┌──────────────┐
+                    │  需求/功能点   │
+                    └──────┬───────┘
+                           │
+                    ┌──────▼───────┐
+         ┌─────────│  RED: 写测试  │◄────────────┐
+         │         │  运行→失败   │              │
+         │         └──────┬───────┘              │
+         │                │                      │
+         │         ┌──────▼───────┐              │
+         │         │ GREEN: 写代码 │              │
+         │         │  运行→通过   │              │
+         │         └──────┬───────┘              │
+         │                │                      │
+         │         ┌──────▼───────┐              │
+         │         │ REFACTOR:    │    还有下一个  │
+         │         │ 清理代码     │──────功能点?───┘
+         │         │ 运行→仍通过  │
+         │         └──────┬───────┘
+         │                │
+         │         ┌──────▼───────┐
+         │         │ 功能完成      │
+         │         └──────────────┘
+         │
+         └──── 违反铁律? 删掉重来!
+```
+
+---
 
 ## 支持框架
 
@@ -24,115 +68,54 @@ allowed-tools: Read,Grep,Glob,Write,Bash
 | Go | go test | - |
 | Vue | Vitest | @vue/test-utils |
 
+---
+
 ## 测试用例分类
 
-### 5 类必测场景
+TDD 阶段必须覆盖以下 **5 类场景**：
 
-1. **正常路径** — 正常输入，预期输出
-2. **边界：空/零值** — 空字符串、空列表、零、None/null
-3. **边界：极值** — 最小/最大值、单元素
-4. **错误：无效输入** — 类型错误、越界、格式错误
-5. **错误：外部失败** — API 超时、DB 错误、文件未找到
+| 类别 | 说明 | 示例 |
+|------|------|------|
+| **正常路径** | 正常输入，预期输出 | 用户查询正常返回 |
+| **边界：空/零值** | 空字符串、空列表、零、null | 查询不存在的 ID |
+| **边界：极值** | 最小/最大值、单元素 | 分页第一页/最后一页 |
+| **错误：无效输入** | 类型错误、越界、格式错误 | 负数ID、非法字符 |
+| **错误：外部失败** | API 超时、DB 错误、文件未找到 | 数据库连接断开 |
 
-## 生成流程
+---
 
-```
-Step 1: 分析源代码
-   ↓
-Step 2: 检测测试框架
-   ↓
-Step 3: 生成测试用例（5 类）
-   ↓
-Step 4: 编写测试代码
-   ↓
-Step 5: 输出摘要
-```
+## 常见借口 —— 及其为什么是错的
 
-## 输出摘要格式
-
-```markdown
-# 测试生成摘要
-
-## 目标文件
-[文件路径]
-
-## 测试框架
-[JUnit 5 / pytest / Jest]
-
-## 测试用例统计
-
-| 类型 | 数量 |
+| 借口 | 反驳 |
 |------|------|
-| 正常路径 | X |
-| 边界值 | X |
-| 异常处理 | X |
-| **总计** | **X** |
+| "太简单了不需要测试" | 简单代码也会出 Bug。全宇宙都知道 getter/setter 不需要测，但你的逻辑需要。 |
+| "我之后再补测试" | 先写代码再补测试 = 测试按照实现来写，不是按照需求来写。边界条件永远不会被覆盖。 |
+| "已经手动测试过了" | 终端里敲两下不是证据。手动测试不可重现，不可持续。 |
+| "删除 X 小时工作太浪费" | 沉没成本谬误。带着错误方法继续写只会产生更多需要重写的代码。 |
+| "这只是 CRUD" | CRUD 涉及参数校验、权限检查、事务处理、异常映射。每一项都需要测试。 |
+| "时间紧，先上线" | 没有测试的代码上线 = 靠运气运行。Bug 在生产环境修的成本是开发阶段的 10 倍以上。 |
 
-## 创建/修改文件
-
-| 文件 | 操作 |
-|------|------|
-| [测试文件1] | 新增 |
-| [测试文件2] | 修改 |
-
-## 运行命令
-```bash
-[测试运行命令]
-```
-```
-
-## Java (JUnit 5 + Mockito) 示例
-
-```java
-@ExtendWith(MockitoExtension.class)
-class UserServiceTest {
-
-    @Mock
-    private UserRepository userRepository;
-
-    @InjectMocks
-    private UserService userService;
-
-    // 正常路径
-    @Test
-    void testGetUserById_Success() {
-        // Given
-        Long userId = 1L;
-        User expected = new User(userId, "张三");
-        when(userRepository.findById(userId)).thenReturn(expected);
-
-        // When
-        User result = userService.getUserById(userId);
-
-        // Then
-        assertEquals(expected.getName(), result.getName());
-    }
-
-    // 边界：空值
-    @Test
-    void testGetUserById_NotFound() {
-        // Given
-        Long userId = 999L;
-        when(userRepository.findById(userId)).thenReturn(null);
-
-        // When & Then
-        assertThrows(UserNotFoundException.class,
-            () -> userService.getUserById(userId));
-    }
-}
-```
+---
 
 ## 规则约束
 
-1. ⚠️ 必须 mock 所有外部依赖（DB、API、文件系统）
-2. ⚠️ 禁止 mock 被测函数本身
-3. ✅ 使用描述性命名：`test_<功能>_<场景>`
-4. ✅ 每个测试至少包含一个断言
-5. ✅ 修改全局状态时必须在 afterEach 清理
+1. ⚠️ **必须先写失败测试，再写生产代码**（违反 = 删除代码重来）
+2. ⚠️ **必须 mock 所有外部依赖**（DB、API、文件系统）
+3. ⚠️ **禁止 mock 被测函数本身**
+4. ✅ 使用描述性命名：`test<功能><场景>` 或 `test_<功能>_<场景>`
+5. ✅ 每个测试至少包含一个断言
+6. ✅ 修改全局状态时必须在 afterEach/teardown 清理
+7. ✅ 测试失败后才能进入 GREEN 阶段
+8. ✅ REFACTOR 阶段必须保持所有测试通过
 
 ## 使用方式
 
 | 场景 | 触发方式 |
 |------|----------|
-| 开发流程 | `/dev-feature` (Phase 5) |
-| 独立测试生成 | `/skill-dev-test` |
+| 开发流程 | `/dev-feature` (Phase 5 - 自动触发 TDD) |
+| 独立使用 | `/skill-dev-test` |
+| 直接描述需求 | "用 TDD 方式实现 [功能]" |
+
+## 版本
+
+_版本: 2.0.0 | 更新: 2026-05-07 | 新增: TDD 铁律、RED→GREEN→REFACTOR 三阶段、常见借口反驳_

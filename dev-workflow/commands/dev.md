@@ -275,18 +275,27 @@ argument-hint: Optional feature description
 
 ## 与 Skills 生态集成
 
-| 阶段 | Skills | 用途 |
-|------|--------|------|
-| Phase 1 | requirement-analyzer | 需求分析 |
-| Phase 3 | spec | 结构化规范 |
-| Phase 4 | design-generator | 技术设计生成 |
-| Phase 4 | design-reviewer | 设计评审 |
-| Phase 6 | code-reviewer | 代码审查 |
-| Phase 6 | spring-boot-reviewer | Java 专项审查 |
-| Phase 6 | vue-reviewer | Vue 专项审查 |
-| Phase 6 | test-gen | 测试生成 |
-| Phase 6 | playwright-skill | E2E 测试 |
-| Phase 9 | bug-analyzer | Bug 分析 |
+### Dev Suite 内置技能
+
+| 阶段 | 内置技能 | 用途 |
+|------|---------|------|
+| Phase 1-3 | brainstorming | 需求澄清与方案设计（一次一问 + YAGNI） |
+| Phase 3 | skill-dev-design | 详细设计文档生成 |
+| Phase 4 | skill-dev-writing-plans | 实现计划拆解（2-5 分钟粒度） |
+| Phase 4 | skill-dev-worktree | Git Worktree 隔离开发环境 |
+| Phase 5 | skill-dev-test (TDD) | TDD 铁律开发（RED→GREEN→REFACTOR） |
+| Phase 6 | skill-dev-review | 两阶段审查（规格合规 → 代码质量） |
+| Phase 7 | skill-dev-verification | 完成前 5 步强制验证 |
+| Phase 8-9 | skill-dev-bug | 系统化调试（4 阶段根因分析） |
+
+### 工作流阶段触发规则
+
+每个阶段启动前，先检查对应技能是否存在：
+
+- **Phase 4 前** → 调用 `skill-dev-writing-plans` 检查是否需要拆解任务
+- **Phase 5 前** → 调用 `skill-dev-test` 确保 TDD 流程
+- **Phase 6 前** → 调用 `skill-dev-review` 准备两阶段审查
+- **完成声明前** → 调用 `skill-dev-verification` 执行 5 步验证
 
 ---
 
@@ -304,6 +313,7 @@ argument-hint: Optional feature description
 
 ---
 
-**版本**: v4.0 Enhanced
+**版本**: v4.1.0
 **基础**: 官方 feature-dev v1.0.0
-**增强日期**: 2026-04-29
+**增强日期**: 2026-05-07
+**本次更新**: 集成 Dev Suite 技能系统（TDD铁律、两阶段审查、系统化调试、完成验证、Worktree、Writing Plans）

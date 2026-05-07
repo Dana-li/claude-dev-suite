@@ -1,0 +1,10 @@
+{
+  "$schema": "https://code.claude.com/schema/plugin-1.0.json",
+  "name": "brainstorming",
+  "version": "2.0.0",
+  "description": "技术方案头脑风暴：编码前强制结构化构思，生成多方案对比、约束分析、决策建议",
+  "author": {
+    "name": "Claude Dev Suite"
+  },
+  "skills": "./"
+}

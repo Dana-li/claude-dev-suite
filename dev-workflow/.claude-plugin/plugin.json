@@ -1,12 +1,14 @@
 {
+  "$schema": "https://code.claude.com/schema/plugin-1.0.json",
   "name": "dev-workflow",
-  "version": "1.0.0",
-  "description": "10阶段全栈开发工作流：Discovery → Hotfix 全生命周期覆盖",
+  "version": "1.1.0",
+  "description": "10阶段全栈开发工作流：Discovery → Hotfix 全生命周期覆盖，含会话自动注入",
   "author": {
     "name": "LeeDC",
     "url": "https://github.com/Dana-li"
   },
   "commands": [
-    "dev"
-  ]
+    "./commands/dev.md"
+  ],
+  "hooks": "./hooks/hooks.json"
 }

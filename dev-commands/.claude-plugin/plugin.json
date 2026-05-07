@@ -1,4 +1,5 @@
 {
+  "$schema": "https://code.claude.com/schema/plugin-1.0.json",
   "name": "dev-commands",
   "version": "1.0.0",
   "description": "Git 开发辅助命令集：commit/push/merge/review/test/deploy",
@@ -6,14 +7,5 @@
     "name": "LeeDC",
     "url": "https://github.com/Dana-li"
   },
-  "commands": [
-    "commit",
-    "push",
-    "merge",
-    "status",
-    "review",
-    "test",
-    "deploy",
-    "close"
-  ]
+  "commands": "./commands/"
 }

@@ -24,6 +24,12 @@
       "source": "./dev-quality",
       "description": "代码审查与质量保障：Bug分析、代码审查、设计评审",
       "version": "1.0.0"
+    },
+    {
+      "name": "brainstorming",
+      "source": "./brainstorming",
+      "description": "技术方案头脑风暴：编码前强制结构化构思，多方案对比与决策建议",
+      "version": "1.0.0"
     }
   ]
 }
