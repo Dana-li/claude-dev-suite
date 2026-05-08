@@ -4,6 +4,40 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)。
 
+## [2.7.0] - 2026-05-08
+
+### 新增
+
+#### dev-quality 技能扩展
+- `skill-dev-micro-frontend` (v1.0.0) - qiankun 微前端整合
+  - 主应用改造步骤
+  - 子应用开发指南
+  - 多项目整合最佳实践
+  - 常见问题排查清单
+- 技能总数：16 → 17 个
+
+#### README 增强
+- 新增「与 Claude Code Superpowers 对比」章节
+- 更新版本号：v1.0.0 → v2.7.0
+- 更新工作流阶段：10 → 11 阶段
+- 补充 Phase 11 Advanced Testing 说明
+
+#### 借鉴 Superpowers 设计
+- P0: 强化 TDD 执行检查（skill-dev-test v2.1.0）
+- P1: 技能自动触发机制（skill-dev-using v1.1.0）
+- P2: 借鉴心理学提示词（brainstorming v2.1.0）
+
+### 修复
+
+- Phase 7 询问选项缺失 Phase 11 问题
+- 技能数量统计不一致问题
+
+### 文档
+
+- 新增 `docs/superpowers-vs-devsuite-analysis.md`（Superpowers 对比分析）
+
+---
+
 ## [1.0.0] - 2026-04-29
 
 ### 新增
