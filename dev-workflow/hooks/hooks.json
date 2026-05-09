@@ -10,6 +10,19 @@
           }
         ]
       }
+    ],
+    "AfterToolCall": [
+      {
+        "matcher": "all",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/context-warning.ps1",
+            "timeout": 5000
+          }
+        ],
+        "description": "上下文使用预警：工具调用>20次时提醒小结"
+      }
     ]
   }
 }
