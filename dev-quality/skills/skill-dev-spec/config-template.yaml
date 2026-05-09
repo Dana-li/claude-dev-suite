@@ -1,0 +1,95 @@
+# OpenSpec 项目级配置模板
+# 放在项目根目录 openspec/config.yaml
+# 
+# 使用方式：
+# 1. 复制此文件到项目 openspec/ 目录下
+# 2. 根据项目实际情况修改各字段
+# 3. Phase 4.5 生成 spec.md 时会自动读取并遵守此配置
+
+# ============================================================
+# 技术栈约束（生成 spec.md 时自动遵守）
+# ============================================================
+tech-stack:
+  backend: spring-boot          # 后端框架：spring-boot / django / express / ...
+  frontend: vue3               # 前端框架：vue3 / react / angular / ...
+  database: mysql-8            # 数据库：mysql-8 / postgresql / mongodb / ...
+  orm: mybatis-plus            # ORM：mybatis-plus / hibernate / typeorm / ...
+  build-tool: maven            # 构建工具：maven / gradle / npm / ...
+
+# ============================================================
+# 架构边界（禁止的依赖方向、分层规则）
+# ============================================================
+architecture:
+  layers:
+    - controller               # 控制器层
+    - service                  # 服务层
+    - repository              # 数据访问层
+    - model                   # 模型层
+  
+  # 禁止的依赖方向（违反则 spec/代码审查不通过）
+  forbidden-dependencies:
+    - controller -> repository   # 禁止 controller 直接访问 repository
+    - service -> controller      # 禁止 service 依赖 controller
+    - repository -> service    # 禁止 repository 依赖 service
+  
+  # 允许的跨层访问（白名单）
+  allowed-cross-layer:
+    - service -> controller    # 仅允许 service 调用 controller 的 DTO
+
+# ============================================================
+# 命名规范（生成 spec.md 中的 capability-id 时遵守）
+# ============================================================
+naming:
+  api: kebab-case              # API 路径：kebab-case
+  function: camelCase          # 函数名：camelCase
+  class: PascalCase            # 类名：PascalCase
+  constant: UPPER_SNAKE_CASE  # 常量：UPPER_SNAKE_CASE
+  database-table: snake_case   # 数据库表名：snake_case
+  database-column: camelCase   # 数据库字段：camelCase（或 snake_case）
+
+# ============================================================
+# 忽略路径（spec 生成时不扫描这些文件/目录）
+# ============================================================
+exclude:
+  - "**/*.test.js"
+  - "**/*.spec.js"
+  - "**/node_modules/**"
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/.git/**"
+  - "**/generated/**"        # 生成的代码（如 protobuf、openapi 生成）
+
+# ============================================================
+# 测试规范（生成 tasks.md 时遵守）
+# ============================================================
+testing:
+  framework: junit5           # 测试框架：junit5 / pytest / jest / vitest
+  coverage-threshold: 70       # 覆盖率阈值（%）
+  naming-pattern: "**/*Test.java"   # 测试文件命名模式
+
+# ============================================================
+# 安全规范（生成 spec.md 时自动添加安全约束）
+# ============================================================
+security:
+  password-storage: bcrypt     # 密码存储：bcrypt / scrypt / argon2
+  jwt-secret-env: true         # JWT secret 必须放在环境变量
+  sql-injection-protection: true  # 必须使用参数化查询
+  xss-protection: true         # 必须做 XSS 防护
+
+# ============================================================
+# 性能规范（生成 spec.md 时自动添加性能约束）
+# ============================================================
+performance:
+  default-timeout-ms: 5000     # 默认超时（毫秒）
+  default-page-size: 20         # 默认分页大小
+  max-page-size: 100            # 最大分页大小
+  cache-ttl-seconds: 300       # 默认缓存 TTL（秒）
+
+# ============================================================
+# 自定义规则（项目特定的额外约束）
+# ============================================================
+custom-rules:
+  - "所有 API 必须返回统一响应格式 Result<T>"
+  - "所有异常必须通过 GlobalExceptionHandler 处理"
+  - "数据库变更必须通过 migration 脚本"
+  - "敏感字段（密码/令牌）不得写入日志"

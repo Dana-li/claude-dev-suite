@@ -5,11 +5,11 @@ argument-hint: Optional feature description
 
 # Feature Development (Enhanced)
 
-> **版本**: v4.5.0
+> **版本**: v4.8.0
 > **基础**: 官方 feature-dev v1.0.0
-> **增强**: 全栈场景覆盖 + DevOps 工作流 + Phase7过渡询问机制
+> **增强**: 全栈场景覆盖 + OpenSpec 规范驱动 + 归档机制 + Phase7过渡询问机制
 > **调用方式**: 在 WorkBuddy 中输入 `/dev-workflow:dev 你的需求描述`，或 Claude Code 中输入 `/dev`
-> **流程**: 10 阶段，Phase 1-7 为核心开发，Phase 8-10 [按需] 进入
+> **流程**: 11 阶段（含 Phase 4.5 Spec Generation），Phase 1-7 为核心开发，Phase 8-10 [按需] 进入
 
 ---
 
@@ -128,6 +128,56 @@ argument-hint: Optional feature description
 
 ---
 
+## ⭐ Phase 4.5: Spec Generation (规范生成) [P0 新增]
+
+**目标**: 将批准的架构设计转化为结构化规范文件（spec.md），作为后续开发的 source of truth
+
+**触发条件**: Phase 4 架构设计获得用户批准后自动执行
+
+**Actions**:
+1. **读取项目配置**（若存在 `openspec/config.yaml`）
+   - 解析 `tech-stack`（技术栈约束）
+   - 解析 `architecture`（架构边界）
+   - 解析 `naming`（命名规范）
+   - 解析 `exclude`（忽略路径）
+   - 将配置内容注入后续 spec.md 生成提示
+
+2. **创建/更新 `openspec/specs/<domain>/spec.md`**
+   - `<domain>` 根据功能领域自动识别（如 `auth`、`payment`、`todo`）
+   - 如果 `specs/<domain>/spec.md` 已存在，生成 **delta spec**（增量规格）
+   - 否则创建完整规格文件
+
+2. **spec.md 结构**（遵循 OpenSpec 规范）:
+```markdown
+# Spec: <domain>
+
+## Why
+<为什么需要这个能力>
+
+## Capabilities
+
+### <capability-id>
+- **描述**: <能力描述>
+- **接口**: <API/函数签名>
+- **行为**: <预期行为>
+- **边界**: <不包含什么>
+
+## Acceptance Scenarios
+
+### <scenario-id>
+- **Given**: <前置条件>
+- **When**: <触发动作>
+- **Then**: <预期结果>
+```
+
+3. **将 spec.md 路径写入当前会话记忆**
+   - 后续 Phase 5/6/7 必须引用此文件
+   - 如果用户说"按规范来"，自动读取 spec.md
+
+4. **向用户确认**: "已生成规范文件 `openspec/specs/<domain>/spec.md`，后续开发将严格按此执行。确认？"
+
+---
+
 ## Phase 5: Implementation (实现)
 
 **目标**: 构建功能
@@ -135,12 +185,20 @@ argument-hint: Optional feature description
 **DO NOT START WITHOUT USER APPROVAL**
 
 **Actions**:
-1. 等待明确批准
-2. 读取前几个阶段识别的所有相关文件
-3. 按照选定的架构实现
-4. 严格遵循代码库约定
-5. 编写清晰、有文档的代码
-6. 随进度更新待办事项
+1. **读取 `openspec/specs/<domain>/spec.md`**（若存在）
+   - 将 spec.md 作为 source of truth
+   - 每完成一个 capability，对照 spec.md 验证
+2. 等待明确批准
+3. 读取前几个阶段识别的所有相关文件
+4. 按照选定的架构 + spec.md 实现
+5. 严格遵循代码库约定
+6. 编写清晰、有文档的代码
+7. 随进度更新待办事项
+
+**Spec 对齐检查**（每完成一个任务）:
+- [ ] capability 行为是否与 spec.md 描述一致？
+- [ ] Acceptance Scenario 是否通过？
+- [ ] 是否引入了 spec.md 中未声明的功能？
 
 **实现检查清单**:
 
@@ -198,7 +256,30 @@ argument-hint: Optional feature description
    - 建议的后续步骤
 2. 更新文档（API 文档、变更日志）
 
-### 7b. 是否继续 → Phase 8-10？
+### 7b. 规范归档（新增）
+
+**触发条件**: 存在 `openspec/changes/<change-name>/` 目录
+
+**Actions**:
+1. **合并 delta specs 到主规格**:
+   - 读取 `changes/<change-name>/specs/<domain>/spec.md`（delta）
+   - 读取 `specs/<domain>/spec.md`（主规格）
+   - 合并规则：
+     - 新增 capability → 追加到 `## Capabilities`
+     - 修改 capability → 更新对应描述/行为/边界
+     - 删除 capability → 移到 `## Deprecated Capabilities`（不直接删除）
+   - 向用户展示合并后的主规格，确认后写入
+
+2. **归档 change 目录**:
+   - 将 `changes/<change-name>/` 移到 `changes/archive/<date>-<change-name>/`
+   - `<date>` 格式：`YYYY-MM-DD`
+   - 示例：`changes/archive/2026-05-09-add-dark-mode/`
+
+3. **更新会话记忆**:
+   - 清除已归档的 change 路径
+   - 更新主规格路径（`specs/<domain>/spec.md`）
+
+### 7c. 是否继续 → Phase 8-10？
 
 **向用户询问**：
 ```
