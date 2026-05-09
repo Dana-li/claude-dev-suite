@@ -4,37 +4,45 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)。
 
+## [2.8.0] - 2026-05-09
+
+### 新增
+
+#### dev-workflow v4.9.0
+- **多工作流支持（P2）**：支持 4 种预置工作流切换
+  - `full-feature`：完整 11 阶段全流程（~125K tokens）
+  - `lightweight`：轻量 5 阶段核心流程（~30K tokens）
+  - `hotfix`：极速 3 阶段热修复（~20K tokens）
+  - `research`：调研 4 阶段输出报告（~31K tokens）
+- **工作流加载器**：`skill-dev-workflow-loader` 技能
+- **工作流验证脚本**：`scripts/validate-workflow.py`
+- **动态阶段执行**：根据工作流配置启用/禁用 Phase
+- **工作流切换**：执行中可随时切换工作流
+- **`--workflow` 参数**：`/dev --workflow <name>` 直接指定工作流
+
+#### dev-quality v2.8.0
+- 版本号同步至 v2.8.0
+
+### 修改
+- `dev.md` 支持 `--workflow` 参数和动态阶段执行
+- 更新调用方式说明（含 `--workflow` 参数）
+
+---
+
 ## [2.7.0] - 2026-05-08
 
 ### 新增
 
-#### dev-quality 技能扩展
-- `skill-dev-micro-frontend` (v1.0.0) - qiankun 微前端整合
-  - 主应用改造步骤
-  - 子应用开发指南
-  - 多项目整合最佳实践
-  - 常见问题排查清单
-- 技能总数：16 → 17 个
+#### dev-quality v2.7.0
+- **qiankun 微前端整合**：`skill-dev-micro-frontend`（主应用改造/子应用开发/多项目整合）
+- **Superpowers 对比章节**：README 新增与 Superpowers 的功能对比
 
-#### README 增强
-- 新增「与 Claude Code Superpowers 对比」章节
-- 更新版本号：v1.0.0 → v2.7.0
-- 更新工作流阶段：10 → 11 阶段
-- 补充 Phase 11 Advanced Testing 说明
-
-#### 借鉴 Superpowers 设计
-- P0: 强化 TDD 执行检查（skill-dev-test v2.1.0）
-- P1: 技能自动触发机制（skill-dev-using v1.1.0）
-- P2: 借鉴心理学提示词（brainstorming v2.1.0）
-
-### 修复
-
-- Phase 7 询问选项缺失 Phase 11 问题
-- 技能数量统计不一致问题
-
-### 文档
-
-- 新增 `docs/superpowers-vs-devsuite-analysis.md`（Superpowers 对比分析）
+#### dev-workflow v4.8.0
+- **Phase 4.5 Spec Generation**：借鉴 OpenSpec（P0/P1）
+- **`skill-dev-spec` v1.0.0**：4 场景完整流程（生成/更新/版本管理/批量）
+- **Phase 7 增强**：新增 7b 规范归档步骤
+- **配置文件模板**：`config-template.yaml`
+- **流程扩展**：10 → 11 阶段
 
 ---
 

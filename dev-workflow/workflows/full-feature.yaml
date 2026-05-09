@@ -1,0 +1,101 @@
+# 完整功能开发工作流
+# 适用：新功能、架构变更、跨模块改造
+# 对应原版 11 阶段完整流程
+
+name: "full-feature"
+description: "完整功能开发 — 11 阶段全流程"
+version: "1.0.0"
+default: true
+
+# 启用的阶段（按顺序排列）
+phases:
+  - id: "1"
+    name: "Discovery"
+    required: true
+    skill: "brainstorming"
+    description: "理解需求，识别场景类型"
+
+  - id: "2"
+    name: "Codebase Exploration"
+    required: true
+    description: "并行启动 code-explorer 代理探索代码库"
+
+  - id: "3"
+    name: "Clarifying Questions"
+    required: true
+    skill: "brainstorming"
+    description: "澄清边界条件、错误处理、集成点"
+
+  - id: "4"
+    name: "Architecture Design"
+    required: true
+    skill: "skill-dev-design,skill-dev-writing-plans,skill-dev-subagent,skill-dev-worktree"
+    description: "设计多方案，输出设计文档和实现计划"
+
+  - id: "5"
+    name: "Implementation"
+    required: true
+    skill: "skill-dev-test,skill-dev-subagent,skill-dev-db-migration,skill-dev-frontend,skill-dev-e2e,skill-dev-micro-frontend"
+    description: "TDD 驱动实现，子 Agent 并行开发"
+
+  - id: "6"
+    name: "Quality Review"
+    required: true
+    skill: "skill-dev-review,skill-dev-subagent"
+    description: "两阶段审查（规格合规 → 代码质量）"
+
+  - id: "7"
+    name: "Summary & Transition"
+    required: true
+    skill: "skill-dev-verification"
+    description: "实现总结，询问是否继续集成/部署/高级测试"
+
+  - id: "8"
+    name: "Integration"
+    required: false
+    optional: true
+    skill: "skill-dev-bug"
+    description: "API/消息队列/缓存集成验证"
+    depends_on: ["7"]
+
+  - id: "9"
+    name: "Deployment"
+    required: false
+    optional: true
+    description: "灰度发布、上线验证、回滚方案"
+    depends_on: ["7", "8"]
+
+  - id: "10"
+    name: "Hotfix"
+    required: false
+    optional: true
+    skill: "skill-dev-bug"
+    description: "生产问题快速修复（按需触发）"
+    depends_on: ["9"]
+
+  - id: "11"
+    name: "Advanced Testing"
+    required: false
+    optional: true
+    skill: "skill-dev-advanced-testing"
+    description: "性能/压力/安全/回归测试（子 Agent 并行）"
+    depends_on: ["7"]
+
+# Token 预算
+token_budget:
+  per_phase:
+    "1": 5000
+    "2": 8000
+    "3": 3000
+    "4": 15000
+    "5": 50000
+    "6": 20000
+    "7": 5000
+    "8": 15000
+    "9": 10000
+    "10": 5000
+    "11": 25000
+  total_estimated: 125000
+
+# 适用场景标签
+tags: ["backend", "frontend", "fullstack", "devops", "database", "integration"]

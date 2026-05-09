@@ -1,0 +1,53 @@
+# 热修复工作流
+# 适用：生产环境紧急问题修复
+# 3 阶段极速流程，优先恢复服务
+
+name: "hotfix"
+description: "热修复 — 3 阶段极速流程"
+version: "1.0.0"
+default: false
+
+# 启用的阶段
+phases:
+  - id: "1"
+    name: "Problem Location"
+    required: true
+    skill: "skill-dev-bug"
+    description: "4 阶段根因分析（复现→隔离→假设→验证）"
+
+  - id: "2"
+    name: "Quick Fix"
+    required: true
+    description: "最小改动原则，优先回滚而非修复"
+
+  - id: "3"
+    name: "Verify & Deploy"
+    required: true
+    description: "修复验证 + 紧急上线 + 监控确认"
+
+# 核心原则
+principles:
+  - "最小改动：只改必须改的"
+  - "优先回滚：能回滚就不改代码"
+  - "快速验证：聚焦问题本身，不做扩展"
+  - "事后复盘：修复完成后补充测试和设计文档"
+
+# 跳过的阶段
+disabled_phases:
+  - "Discovery（需求发现）"
+  - "Codebase Exploration（代码库探索）"
+  - "Clarifying Questions（详细澄清）"
+  - "Architecture Design（架构设计）"
+  - "Quality Review（完整审查）"
+  - "Advanced Testing（高级测试）"
+
+# Token 预算（极速版）
+token_budget:
+  per_phase:
+    "1": 5000
+    "2": 10000
+    "3": 5000
+  total_estimated: 20000
+
+# 适用场景标签
+tags: ["hotfix", "production-bug", "emergency", "rollback"]

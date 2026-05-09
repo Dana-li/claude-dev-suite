@@ -1,0 +1,63 @@
+# 调研工作流
+# 适用：技术调研、方案评估、架构决策
+# 4 阶段调研流程，输出结构化报告
+
+name: "research"
+description: "技术调研 — 4 阶段调研流程"
+version: "1.0.0"
+default: false
+
+# 启用的阶段
+phases:
+  - id: "1"
+    name: "Define Scope"
+    required: true
+    skill: "brainstorming"
+    description: "明确调研目标、边界、成功标准"
+
+  - id: "2"
+    name: "Deep Exploration"
+    required: true
+    description: "并行启动 explorer 代理，多维度探索"
+
+  - id: "3"
+    name: "Analysis & Comparison"
+    required: true
+    skill: "brainstorming"
+    description: "方案对比、权衡分析、风险识别"
+
+  - id: "4"
+    name: "Report & Recommendation"
+    required: true
+    description: "输出结构化调研报告 + 推荐方案"
+
+# 输出格式
+output:
+  format: "markdown"
+  sections:
+    - "背景与目标"
+    - "调研方法"
+    - "方案对比（优劣/成本/风险）"
+    - "推荐方案 + 理由"
+    - "实施路径（下一步）"
+    - "开放问题"
+
+# 跳过的阶段
+disabled_phases:
+  - "Implementation（代码实现）"
+  - "Quality Review（代码审查）"
+  - "Integration（集成验证）"
+  - "Deployment（部署上线）"
+  - "Advanced Testing（高级测试）"
+
+# Token 预算（调研版）
+token_budget:
+  per_phase:
+    "1": 3000
+    "2": 15000
+    "3": 8000
+    "4": 5000
+  total_estimated: 31000
+
+# 适用场景标签
+tags: ["research", "evaluation", "architecture-decision", "tech-selection"]

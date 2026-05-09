@@ -1,15 +1,99 @@
 ---
-description: Guided feature development with codebase understanding, architecture focus, and full-stack scenario support
-argument-hint: Optional feature description
+description: Guided feature development with workflow selection (full-feature/lightweight/hotfix/research)
+argument-hint: [--workflow <name>] [feature description]
 ---
 
 # Feature Development (Enhanced)
 
-> **版本**: v4.8.0
+> **版本**: v4.9.0
 > **基础**: 官方 feature-dev v1.0.0
-> **增强**: 全栈场景覆盖 + OpenSpec 规范驱动 + 归档机制 + Phase7过渡询问机制
-> **调用方式**: 在 WorkBuddy 中输入 `/dev-workflow:dev 你的需求描述`，或 Claude Code 中输入 `/dev`
-> **流程**: 11 阶段（含 Phase 4.5 Spec Generation），Phase 1-7 为核心开发，Phase 8-10 [按需] 进入
+> **增强**: 全栈场景覆盖 + DevOps 工作流 + Phase7过渡询问机制 + Superpowers心理学增强 + **多工作流支持**
+> **调用方式**: 在 WorkBuddy 中输入 `/dev-workflow:dev [--workflow <name>] 你的需求描述`，或 Claude Code 中输入 `/dev [--workflow <name>]`
+> **工作流**: 支持 4 种预置工作流，通过 `--workflow` 参数切换
+> **流程**: 动态阶段，根据选择的工作流确定（full-feature: 11阶段 / lightweight: 5阶段 / hotfix: 3阶段 / research: 4阶段）
+
+---
+
+## 工作流选择（Workflow Selection）
+
+在执行任何阶段前，必须先确定使用哪个工作流：
+
+### 1. 检查命令行参数
+
+如果用户启动时指定了 `--workflow <name>`，直接使用该工作流：
+
+```bash
+# 示例
+/dev --workflow lightweight 修复登录BUG
+/dev --workflow hotfix 生产环境502错误
+/dev --workflow research Vue3迁移方案评估
+```
+
+### 2. 无参数时显示选择菜单
+
+```
+📋 请选择工作流：
+
+1️⃣ full-feature  — 完整功能开发（11 阶段，~125K tokens）
+   适用：新功能、架构变更、跨模块改造
+
+2️⃣ lightweight  — 轻量开发（5 阶段，~30K tokens）
+   适用：小功能、Bug 修复、局部优化
+
+3️⃣ hotfix  — 热修复（3 阶段，~20K tokens）
+   适用：生产环境紧急问题
+
+4️⃣ research  — 技术调研（4 阶段，~31K tokens）
+   适用：技术调研、方案评估、架构决策
+
+5️⃣ custom  — 自定义工作流
+   加载 dev-workflow/workflows/custom.yaml
+
+请输入 1、2、3、4 或 5
+```
+
+### 3. 加载工作流配置
+
+选择后，加载对应的 YAML 配置文件：
+
+```python
+import yaml
+
+workflow_name = "lightweight"  # 用户选择的名称
+workflow_path = f"dev-workflow/workflows/{workflow_name}.yaml"
+
+with open(workflow_path, 'r', encoding='utf-8') as f:
+    workflow_config = yaml.safe_load(f)
+
+# 获取启用的阶段
+enabled_phases = [p['id'] for p in workflow_config['phases']]
+```
+
+### 4. 动态执行阶段
+
+根据工作流配置，只执行启用的阶段：
+
+```
+对于 workflow_config['phases'] 中的每个 phase：
+  - 如果该 phase 的 id 在 enabled_phases 中
+    - 执行该 phase
+  - 否则
+    - 跳过，并输出 "⏭️  跳过 Phase X: [name]（当前工作流未启用）"
+```
+
+### 5. 工作流切换
+
+执行过程中，用户可随时切换工作流：
+
+```
+用户：切换到 full-feature 工作流
+
+Agent 响应：
+  ✅ 已保存当前进度（Phase 1-3 完成）
+  ✅ 已加载 full-feature 工作流配置
+  ⚠️  以下阶段将被跳过：无（full-feature 包含所有阶段）
+  ➡️  继续执行 Phase 4...
+```
 
 ---
 
@@ -19,6 +103,33 @@ argument-hint: Optional feature description
 - **系统性方法**: 理解代码库 → 澄清需求 → 设计架构 → 实现 → 审查 → 总结
 - **并行代理**: 充分利用 code-explorer/architect/reviewer 代理
 - **用户确认**: 每个关键阶段需要明确批准
+
+---
+
+## Phase 执行逻辑（Workflow-Aware）
+
+加载工作流配置后，按以下逻辑执行各阶段：
+
+```
+# 伪代码
+current_workflow = load_workflow(user_selection)
+enabled_phases = [p['id'] for p in current_workflow['phases']]
+
+for phase in all_phases:
+    if phase.id in enabled_phases:
+        execute(phase)
+    else:
+        log(f"⏭️ 跳过 Phase {phase.id}: {phase.name}（当前工作流未启用）")
+```
+
+**阶段标题格式**：
+
+每个 Phase 标题将标注适用的工作流：
+
+- `[full-feature, lightweight, hotfix, research]` = 所有工作流都启用
+- `[full-feature, lightweight]` = 仅特定工作流启用
+- `[full-feature]` = 仅完整工作流启用
+- ⭐ = 按需阶段（可选）
 
 ---
 
@@ -128,56 +239,6 @@ argument-hint: Optional feature description
 
 ---
 
-## ⭐ Phase 4.5: Spec Generation (规范生成) [P0 新增]
-
-**目标**: 将批准的架构设计转化为结构化规范文件（spec.md），作为后续开发的 source of truth
-
-**触发条件**: Phase 4 架构设计获得用户批准后自动执行
-
-**Actions**:
-1. **读取项目配置**（若存在 `openspec/config.yaml`）
-   - 解析 `tech-stack`（技术栈约束）
-   - 解析 `architecture`（架构边界）
-   - 解析 `naming`（命名规范）
-   - 解析 `exclude`（忽略路径）
-   - 将配置内容注入后续 spec.md 生成提示
-
-2. **创建/更新 `openspec/specs/<domain>/spec.md`**
-   - `<domain>` 根据功能领域自动识别（如 `auth`、`payment`、`todo`）
-   - 如果 `specs/<domain>/spec.md` 已存在，生成 **delta spec**（增量规格）
-   - 否则创建完整规格文件
-
-2. **spec.md 结构**（遵循 OpenSpec 规范）:
-```markdown
-# Spec: <domain>
-
-## Why
-<为什么需要这个能力>
-
-## Capabilities
-
-### <capability-id>
-- **描述**: <能力描述>
-- **接口**: <API/函数签名>
-- **行为**: <预期行为>
-- **边界**: <不包含什么>
-
-## Acceptance Scenarios
-
-### <scenario-id>
-- **Given**: <前置条件>
-- **When**: <触发动作>
-- **Then**: <预期结果>
-```
-
-3. **将 spec.md 路径写入当前会话记忆**
-   - 后续 Phase 5/6/7 必须引用此文件
-   - 如果用户说"按规范来"，自动读取 spec.md
-
-4. **向用户确认**: "已生成规范文件 `openspec/specs/<domain>/spec.md`，后续开发将严格按此执行。确认？"
-
----
-
 ## Phase 5: Implementation (实现)
 
 **目标**: 构建功能
@@ -185,20 +246,12 @@ argument-hint: Optional feature description
 **DO NOT START WITHOUT USER APPROVAL**
 
 **Actions**:
-1. **读取 `openspec/specs/<domain>/spec.md`**（若存在）
-   - 将 spec.md 作为 source of truth
-   - 每完成一个 capability，对照 spec.md 验证
-2. 等待明确批准
-3. 读取前几个阶段识别的所有相关文件
-4. 按照选定的架构 + spec.md 实现
-5. 严格遵循代码库约定
-6. 编写清晰、有文档的代码
-7. 随进度更新待办事项
-
-**Spec 对齐检查**（每完成一个任务）:
-- [ ] capability 行为是否与 spec.md 描述一致？
-- [ ] Acceptance Scenario 是否通过？
-- [ ] 是否引入了 spec.md 中未声明的功能？
+1. 等待明确批准
+2. 读取前几个阶段识别的所有相关文件
+3. 按照选定的架构实现
+4. 严格遵循代码库约定
+5. 编写清晰、有文档的代码
+6. 随进度更新待办事项
 
 **实现检查清单**:
 
@@ -256,30 +309,7 @@ argument-hint: Optional feature description
    - 建议的后续步骤
 2. 更新文档（API 文档、变更日志）
 
-### 7b. 规范归档（新增）
-
-**触发条件**: 存在 `openspec/changes/<change-name>/` 目录
-
-**Actions**:
-1. **合并 delta specs 到主规格**:
-   - 读取 `changes/<change-name>/specs/<domain>/spec.md`（delta）
-   - 读取 `specs/<domain>/spec.md`（主规格）
-   - 合并规则：
-     - 新增 capability → 追加到 `## Capabilities`
-     - 修改 capability → 更新对应描述/行为/边界
-     - 删除 capability → 移到 `## Deprecated Capabilities`（不直接删除）
-   - 向用户展示合并后的主规格，确认后写入
-
-2. **归档 change 目录**:
-   - 将 `changes/<change-name>/` 移到 `changes/archive/<date>-<change-name>/`
-   - `<date>` 格式：`YYYY-MM-DD`
-   - 示例：`changes/archive/2026-05-09-add-dark-mode/`
-
-3. **更新会话记忆**:
-   - 清除已归档的 change 路径
-   - 更新主规格路径（`specs/<domain>/spec.md`）
-
-### 7c. 是否继续 → Phase 8-10？
+### 7b. 是否继续 → Phase 8-11？
 
 **向用户询问**：
 ```
@@ -287,13 +317,18 @@ argument-hint: Optional feature description
 
 1️⃣ 集成验证（Phase 8）— API/消息队列/缓存集成验证
 2️⃣ 部署上线（Phase 9）— 备份/灰度/上线验证
-3️⃣ 到此为止 — 仅完成开发
+3️⃣ 高级测试（Phase 11）— 性能/压力/安全/回归测试
+4️⃣ 到此为止 — 仅完成开发
 
-请输入 1、2 或 3
+请输入 1、2、3 或 4
 ```
 
-> **注意**：如果用户选择 1 或 2，不要结束会话，继续执行后续阶段。
-> 不要自动标记所有待办完成 — Phase 8-10 的待办尚未执行。
+> **注意**：
+> - 如果用户选择 1 → 执行 Phase 8（可继续选择 2、3）
+> - 如果用户选择 2 → 执行 Phase 8-9
+> - 如果用户选择 3 → 执行 Phase 11（可与 8、9 组合）
+> - 如果用户选择 4 → 结束开发流程
+> - 不要自动标记所有待办完成 — 未执行的 Phase 待办保留
 
 ---
 
@@ -373,6 +408,94 @@ argument-hint: Optional feature description
 
 ---
 
+## ⭐ Phase 11: Advanced Testing (高级测试) [按需]
+
+**目标**: 具备高级软件测试工程师能力
+
+**详细规范**: 见 `phase11-advanced-testing.md`
+
+### 测试类型覆盖
+
+| 测试类型 | 并行支持 | 自动化程度 | 子 Agent |
+|----------|----------|------------|----------|
+| **前端单元测试** | ✅ 子 Agent | 高 | frontend-unit-expert |
+| **E2E 测试** | ⚠️ 独立环境 | 高 | e2e-test-expert |
+| 黑盒测试 | ✅ 子 Agent | 高 | unit-test-expert |
+| 白盒测试 | ⚠️ 受限 | 中 | code-coverage-expert |
+| 单元测试 | ✅ 子 Agent | 高 | unit-test-expert |
+| 性能测试 | ❌ 串行 | 中 | performance-expert |
+| 压力测试 | ❌ 串行 | 中 | stress-expert |
+| 回归测试 | ✅ 子 Agent | 高 | regression-expert |
+| 安全测试 | ⚠️ 受限 | 中 | security-expert |
+
+### 子 Agent 并行策略
+
+```
+前端单元测试 ←→ 后端单元测试 ←→ 黑盒测试 ←→ 回归测试（P1/P2）
+           ↓
+        并行执行
+           ↓
+     docs/sessions/{id}/tests/
+
+E2E 测试 → 独立浏览器环境 → 建议串行
+
+性能/压力测试 → 独占环境 → 串行执行
+```
+
+### 测试专家 Agent
+
+| Agent | 职责 | 前置技能 |
+|-------|------|----------|
+| **frontend-unit-expert** | Vue/Vitest 组件测试 | skill-dev-frontend |
+| **e2e-test-expert** | Playwright 用户场景 | skill-dev-e2e |
+| unit-test-expert | 单元测试 + 覆盖率分析 | - |
+| performance-expert | 性能指标 + 瓶颈分析 | - |
+| security-expert | OWASP + 漏洞扫描 | - |
+| regression-expert | 回归测试套件执行 | - |
+
+### 共享测试能力
+
+| 组件 | 功能 | 集成方式 |
+|------|------|----------|
+| **TestCaseHub** | 统一测试用例管理 | 用例创建/分配/追踪 |
+| **Assign-Fix-Loop** | 分发修复流程 | 缺陷从发现到修复闭环 |
+| **在线搜索** | 搜索测试框架最新实践 | brainstorming + web-search |
+| **防止过度测试** | 覆盖充分性判断 | 够用原则 + 优先级矩阵 |
+
+### 防止过度测试规则
+
+```
+够用原则：
+- 核心路径: 100% 覆盖
+- 边界条件: 合理覆盖
+- 异常场景: 按风险覆盖
+
+过度测试信号：
+- 单元测试测 private 方法
+- E2E 测试覆盖 getter/setter
+- 追求 100% 代码覆盖率
+- 重复测试已有覆盖的场景
+
+判断标准：
+1. 是否有代码变更或新功能？
+2. 是否有已有测试覆盖？
+3. 能否发现潜在缺陷？
+4. 长期维护成本是否合理？
+```
+
+### Windows MCP 模拟点击
+
+| 能力 | 说明 | 集成阶段 |
+|------|------|----------|
+| 鼠标/键盘自动化 | 模拟人手操作 | Phase 8 集成验证 |
+| 窗口管理 | 激活/截图验证 | Phase 9 部署 |
+| 进程监控 | 服务状态验证 | 任意阶段可选 |
+
+> **注意**: Windows MCP 是可选扩展，不配置不影响核心工作流。
+> 详见 `skill-dev-windows` 技能。
+
+---
+
 ## 与 Skills 生态集成
 
 ### Dev Suite 内置技能
@@ -393,6 +516,7 @@ argument-hint: Optional feature description
 | Phase 6 | skill-dev-subagent | 子 Agent 自动审查循环 |
 | Phase 7 | skill-dev-verification | 完成前 5 步强制验证 |
 | Phase 8-9 | skill-dev-bug | 系统化调试（4 阶段根因分析） |
+| Phase 11 | skill-dev-advanced-testing | 高级测试（前端单元/E2E/性能/压力/安全/回归并行，含TestCaseHub/AssignFixLoop/防止过度测试） |
 
 ### 工作流阶段触发规则
 
@@ -457,7 +581,7 @@ argument-hint: Optional feature description
 
 ---
 
-**版本**: v4.5.0
+**版本**: v4.7.0
 **基础**: 官方 feature-dev v1.0.0
-**增强日期**: 2026-05-07
-**本次更新**: 修复Phase7过早结束问题（标记完成→询问是否继续）；Phase8-10改为[按需]
+**增强日期**: 2026-05-08
+**本次更新**: Phase 11 增强（添加前端单元测试/E2E 测试子 Agent、共享测试用例Hub、分发修复流程、防止过度测试规则、Windows MCP 模拟点击）

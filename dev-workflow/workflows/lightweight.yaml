@@ -1,0 +1,61 @@
+# 轻量开发工作流
+# 适用：小功能、Bug 修复、局部优化
+# 精简为 5 个核心阶段，跳过可选阶段
+
+name: "lightweight"
+description: "轻量开发 — 5 阶段核心流程"
+version: "1.0.0"
+default: false
+
+# 启用的阶段
+phases:
+  - id: "1"
+    name: "Discovery"
+    required: true
+    description: "简要理解需求和范围"
+
+  - id: "2"
+    name: "Quick Exploration"
+    required: false
+    description: "快速定位相关文件（可选）"
+
+  - id: "3"
+    name: "Implementation"
+    required: true
+    skill: "skill-dev-test"
+    description: "TDD 实现（RED→GREEN→REFACTOR）"
+
+  - id: "4"
+    name: "Quick Review"
+    required: true
+    skill: "skill-dev-review"
+    description: "单轮代码审查（规格 + 质量）"
+
+  - id: "5"
+    name: "Summary"
+    required: true
+    skill: "skill-dev-verification"
+    description: "完成验证，输出变更摘要"
+
+# 跳过的阶段
+disabled_phases:
+  - "Codebase Exploration（完整）"
+  - "Clarifying Questions（详细澄清）"
+  - "Architecture Design（多方案设计）"
+  - "Integration（集成验证）"
+  - "Deployment（部署上线）"
+  - "Hotfix（热修复）"
+  - "Advanced Testing（高级测试）"
+
+# Token 预算（轻量版）
+token_budget:
+  per_phase:
+    "1": 2000
+    "2": 3000
+    "3": 15000
+    "4": 8000
+    "5": 2000
+  total_estimated: 30000
+
+# 适用场景标签
+tags: ["bugfix", "small-feature", "refactor", "quick-fix"]
